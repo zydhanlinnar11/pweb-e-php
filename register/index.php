@@ -26,6 +26,13 @@ if ($_SESSION["loggedin"] ?? false) {
     <form style="min-width: 360px;" method="post" class="bg-light py-3 px-4 needs-validation" novalidate>
         <h3 class="mb-3">Register</h3>
         <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Zydhan Linnar Putra" required>
+            <div class="invalid-feedback">
+                Please enter name.
+            </div>
+        </div>
+        <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
             <div class="invalid-feedback">
@@ -34,7 +41,7 @@ if ($_SESSION["loggedin"] ?? false) {
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
             <div class="invalid-feedback">
                 Please enter password.
             </div>
