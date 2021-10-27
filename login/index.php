@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validasi user
     var_dump($_POST);
@@ -25,6 +27,12 @@ if ($_SESSION["loggedin"] ?? false) {
 <body class="vh-100 d-flex align-items-center justify-content-center">
     <form style="min-width: 360px;" method="post" class="bg-light py-3 px-4 needs-validation" novalidate>
         <h3>Login</h3>
+        <?php
+            if (isset($_SESSION['success_msg'])) {
+                echo '<div class="alert alert-success" role="alert">'. $_SESSION['success_msg'] .'</div>';
+                unset($_SESSION['success_msg']);
+            }
+        ?>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>

@@ -1,9 +1,66 @@
 <?php
 
+session_start();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once "../config.php";
+    
     // Register user
-    var_dump($_POST);
-    exit;
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    if(empty(trim($name))) {
+        header('location: /register');
+        $_SESSION["warning"] = "Name can't be empty";
+        exit;
+    }
+    if(!preg_match('/^[ a-zA-Z0-9]+$/', trim($name))) {
+        header('location: /register');
+        $_SESSION["warning"] = "Name can only contain letters, numbers, and space.";
+        exit;
+    }
+
+    if(empty($email)) {
+        header('location: /register');
+        $_SESSION["warning"] = "Email can't be empty";
+        exit;
+    }
+    if(!preg_match('/^[a-zA-Z0-9_@.]+$/', $email)) {
+        header('location: /register');
+        $_SESSION["warning"] = "Email can only contain letters, numbers, dot, and underscores.";
+        exit;
+    }
+
+    if(empty($password)) {
+        header('location: /register');
+        $_SESSION["warning"] = "Password can't be empty";
+        exit;
+    }
+    if(!preg_match('/^[a-zA-Z0-9_]+$/', $password)) {
+        header('location: /register');
+        $_SESSION["warning"] = "Password can only contain letters, numbers, and underscores.";
+        exit;
+    }
+
+    // All data is in valid state
+    $sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    if($statement = mysqli_prepare($link, $sql)) {
+        mysqli_stmt_bind_param($statement, "sss", $name, $email, password_hash($password, PASSWORD_BCRYPT));
+        if (mysqli_stmt_execute($statement)) {
+            header("location: /login");
+            $_SESSION["success_msg"] = "Account created";
+        } else {
+            header("location: /register");
+            $_SESSION["warning"] = "Can't create account";
+        }
+        mysqli_stmt_close($statement);
+        exit;
+    } else {
+        header("location: /register");
+        $_SESSION["warning"] = "Can't create account";
+        exit;
+    }
 }
 
 if ($_SESSION["loggedin"] ?? false) {
@@ -25,6 +82,12 @@ if ($_SESSION["loggedin"] ?? false) {
 <body class="vh-100 d-flex align-items-center justify-content-center">
     <form style="min-width: 360px;" method="post" class="bg-light py-3 px-4 needs-validation" novalidate>
         <h3 class="mb-3">Register</h3>
+        <?php
+            if (isset($_SESSION['warning'])) {
+                echo '<div class="alert alert-danger" role="alert">'. $_SESSION['warning'] .'</div>';
+                unset($_SESSION['warning']);
+            }
+        ?>
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="Zydhan Linnar Putra" required>
